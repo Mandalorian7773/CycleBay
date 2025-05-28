@@ -88,28 +88,28 @@ const PostAd = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-
-    const fd = new FormData();
-    fd.append("name", formData.name);
-    fd.append("price", Number(formData.price));
-    fd.append("desc", formData.desc);
-    fd.append("category", formData.category);
-    fd.append("stock", Number(formData.stock));
-    fd.append("image", formData.image); 
-    fd.append("description", JSON.stringify(formData.description));
-
     try {
-      const response = await axios.post("http://localhost:3000/product/create", fd, {
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === 'description') {
+          Object.entries(value).forEach(([descKey, descValue]) => {
+            formDataToSend.append(`description.${descKey}`, descValue);
+          });
+        } else {
+          formDataToSend.append(key, value);
+        }
+      });
+
+      const response = await axios.post('http://localhost:3000/product', formDataToSend, {
         headers: {
-          "x-access-token": token,
-          "Content-Type": "multipart/form-data",
-        },
+          'Content-Type': 'multipart/form-data',
+          'x-access-token': localStorage.getItem('token')
+        }
       });
       console.log("Product added:", response.data);
       alert("Congratulation! Product was added successfully")
 
-    // Reset form
+      // Reset form
       setFormData({
         name: '',
         desc: '',

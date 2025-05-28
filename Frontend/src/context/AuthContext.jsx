@@ -15,8 +15,14 @@ export const AuthContextProvider = ({ children }) => {
             try {
                 const token = localStorage.getItem('token');
                 if (token) {
-                    // You can decode the token here if needed
-                    setUser({ token });
+                    // Get user data from localStorage if available
+                    const userData = localStorage.getItem('userData');
+                    if (userData) {
+                        setUser(JSON.parse(userData));
+                    } else {
+                        // If no user data in localStorage, we'll fetch it when needed
+                        setUser({ token });
+                    }
                 }
             } catch (error) {
                 console.error('Error checking auth status:', error);
@@ -28,14 +34,29 @@ export const AuthContextProvider = ({ children }) => {
         checkUserLoggedIn();
     }, []);
 
-    const login = (userData) => {
-        setUser(userData);
-        localStorage.setItem('token', userData.token);
+    const login = async (userData) => {
+        try {
+            // Store token in localStorage
+            localStorage.setItem('token', userData.token);
+            
+            // Store user data in localStorage
+            localStorage.setItem('userData', JSON.stringify({
+                _id: userData._id,
+                name: userData.name,
+                token: userData.token
+            }));
+            
+            setUser(userData);
+        } catch (error) {
+            console.error('Error during login:', error);
+            throw error;
+        }
     };
 
     const logout = () => {
         setUser(null);
         localStorage.removeItem('token');
+        localStorage.removeItem('userData');
     };
 
     return (
