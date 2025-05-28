@@ -229,58 +229,61 @@ const Messages = () => {
     if (error) return <div className="error">{error}</div>;
 
     return (
-        <>
-            <NavBar />
-            <div className="messages-container">
-                <div className="users-sidebar">
-                    <h2>Chats</h2>
-                    <div className="users-list">
-                        {users.map((user) => (
-                            <div
-                                key={user._id}
-                                className={`user-item ${selectedUser?._id === user._id ? 'selected' : ''}`}
-                                onClick={() => setSelectedUser(user)}
-                            >
-                                {user.name}
+        <div className="messages-container">
+            <div className="users-sidebar">
+                <h2>Chats</h2>
+                <div className="users-list">
+                    {users.map((user) => (
+                        <div
+                            key={user._id}
+                            className={`user-item ${selectedUser?._id === user._id ? 'selected' : ''}`}
+                            onClick={() => setSelectedUser(user)}
+                        >
+                            <div className="user-avatar">
+                                {user.name?.charAt(0).toUpperCase()}
                             </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="chat-container">
-                    {selectedUser ? (
-                        <>
-                            <div className="chat-header">
-                                <h2>{receiverName || 'Select a user to chat'}</h2>
+                            <div className="user-info">
+                                <h3>{user.name}</h3>
+                                <p>{user.email || 'No email available'}</p>
                             </div>
-                            <div className="messages-list">
-                                {messages.map((message, index) => (
-                                    <div key={message._id || index}>
-                                        <div className={`message ${message.senderId === user._id ? 'sent' : 'received'}`}>
-                                            <div className="message-content">
-                                                {message.message}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <form onSubmit={handleSendMessage} className="message-input">
-                                <input
-                                    type="text"
-                                    value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                    placeholder="Type a message..."
-                                />
-                                <button type="submit">Send</button>
-                            </form>
-                        </>
-                    ) : (
-                        <div className="no-chat-selected">
-                            <h2>Select a user to start chatting</h2>
                         </div>
-                    )}
+                    ))}
                 </div>
             </div>
-        </>
+            <div className="chat-container">
+                {selectedUser ? (
+                    <>
+                        <div className="chat-header">
+                            <h2>{receiverName || 'Select a user to chat'}</h2>
+                        </div>
+                        <div className="messages-list">
+                            {messages.map((message, index) => (
+                                <div key={message._id || index}>
+                                    <div className={`message ${message.senderId === user._id ? 'sent' : 'received'}`}>
+                                        <div className="message-content">
+                                            {message.message}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <form onSubmit={handleSendMessage} className="message-input">
+                            <input
+                                type="text"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                placeholder="Type a message..."
+                            />
+                            <button type="submit">Send</button>
+                        </form>
+                    </>
+                ) : (
+                    <div className="no-chat-selected">
+                        <h2>Select a user to start chatting</h2>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 };
 
