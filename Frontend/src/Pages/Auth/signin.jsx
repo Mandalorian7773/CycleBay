@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import "./signin.css";
 
@@ -10,6 +11,7 @@ const SignIn = () => {
   });
 
   const navigate = useNavigate();
+  const { login } = useAuthContext();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -37,21 +39,18 @@ const SignIn = () => {
         
         // Ensure token is properly formatted before storing
         const cleanToken = token.trim();
-        localStorage.setItem('token', cleanToken);
         
         const tokenParts = cleanToken.split('.');
         if (tokenParts.length === 3) {
           const payload = JSON.parse(atob(tokenParts[1]));
           const userData = {
+            token: cleanToken,
             email: formData.email,
-            userId: payload.userId,
+            _id: payload.userId,
             type: payload.type || 'user'
           };
           
-          localStorage.setItem('user', JSON.stringify(userData));
-          console.log('Stored user data:', userData);
-          
-          window.dispatchEvent(new Event('authStateChange'));
+          login(userData);
           navigate('/', { replace: true }); 
         } else {
           throw new Error('Invalid token format');

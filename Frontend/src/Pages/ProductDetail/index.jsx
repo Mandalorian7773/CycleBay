@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from 'react'
 import NavBar from '../../Components/NavBar'
 //import {jwtDecode} from 'jwt-decode'
-import {useParams} from 'react-router-dom'
+import {useParams, useNavigate} from 'react-router-dom'
+import {useAuthContext} from '../../context/AuthContext'
 import './productDetail.css'
 
 function ProductDetail() {
   const {id} = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuthContext()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -78,6 +81,21 @@ function ProductDetail() {
       console.error("Error sending offer:", err);
       alert("Something went wrong while sending the offer.");
     }
+  };
+
+  const handleChatWithSeller = () => {
+    if (!user) {
+      alert("Please login to chat with the seller");
+      return;
+    }
+
+    if (product.createdBy._id === user._id) {
+      alert("You cannot chat with yourself");
+      return;
+    }
+
+    // Navigate to messages page with seller's ID
+    navigate(`/messages?sellerId=${product.createdBy._id}`);
   };
 
   const formatPrice = (price) => {
@@ -165,7 +183,7 @@ function ProductDetail() {
                     <span className="info-value">{new Date(product.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
-                <button className="chat-seller-btn">
+                <button className="chat-seller-btn" onClick={handleChatWithSeller}>
                   <img src="https://cdn-icons-png.flaticon.com/128/134/134914.png" alt="chat" />
                   Chat with Seller
                 </button>

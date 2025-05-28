@@ -11,10 +11,11 @@ import About from './Pages/About'
 import Sell from './Pages/Sell'
 import ProductDetail from './Pages/ProductDetail'
 import PostAd from './Pages/PostAd'
-import Messages from './Pages/Messages/Messages'
+import Messages from './Pages/Messages'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ManageProducts from './Pages/ManageProducts'
 import { ThemeProvider } from './context/ThemeContext'
+import { AuthContextProvider } from './context/AuthContext'
 import Footer from './Components/Footer'
 
 function AppContent() {
@@ -45,9 +46,11 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
+      <AuthContextProvider>
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </AuthContextProvider>
     </ThemeProvider>
   );
 }
